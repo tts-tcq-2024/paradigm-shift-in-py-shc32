@@ -19,36 +19,40 @@ def translate(message_key):
     }
     return translations[LANGUAGE].get(message_key, "{}")
 
+def print_warning_or_error(measure_name, measure_value, lower_limit, upper_limit):
+    """Print warning or error messages based on the measurement value."""
+    warning_tolerance = 0.05 * upper_limit
+    messages = []
+    
+    # Warning conditions
+    if lower_limit <= measure_value < lower_limit + warning_tolerance:
+        messages.append(translate('approaching_low').format(measure_name))
+    if upper_limit - warning_tolerance < measure_value <= upper_limit:
+        messages.append(translate('approaching_high').format(measure_name))
+    
+    # Error conditions
+    if measure_value < lower_limit:
+        messages.append(translate('too_low').format(measure_name))
+        return False, messages
+    if measure_value > upper_limit:
+        messages.append(translate('too_high').format(measure_name))
+        return False, messages
+    
+    return True, messages
+
 def check_measure(measure_name, measure_value, lower_limit, upper_limit):
     """Check if a measurement is within the specified limits and provide warnings."""
-    warning_tolerance = 0.05 * upper_limit
-    results = {}
-    
-    # Determine if a warning is needed
-    if lower_limit <= measure_value < lower_limit + warning_tolerance:
-        print(translate('approaching_low').format(measure_name))
-    
-    if upper_limit - warning_tolerance < measure_value <= upper_limit:
-        print(translate('approaching_high').format(measure_name))
-    
-    # Check if the value is within the acceptable range
-    if measure_value < lower_limit:
-        print(translate('too_low').format(measure_name))
-        results["status"] = False
-    elif measure_value > upper_limit:
-        print(translate('too_high').format(measure_name))
-        results["status"] = False
-    else:
-        results["status"] = True
-
-    return results
+    status, messages = print_warning_or_error(measure_name, measure_value, lower_limit, upper_limit)
+    for message in messages:
+        print(message)
+    return {"status": status}
 
 def battery_is_ok(temperature, soc, charge_rate):
     """Check if the battery is within acceptable parameters and issue warnings."""
     temp_results = check_measure("Temperature", temperature, 0, 45)
     soc_results = check_measure("State of Charge", soc, 20, 80)
     charge_results = check_measure("Charge Rate", charge_rate, 0, 0.8)
-
+    
     # Return whether all measurements are within acceptable limits
     return temp_results["status"] and soc_results["status"] and charge_results["status"]
 
@@ -59,5 +63,6 @@ if __name__ == "__main__":
     assert battery_is_ok(-1, 70, 0.7) == False
     assert battery_is_ok(25, 10, 0.7) == False
     assert battery_is_ok(25, 70, 0.9) == False
+
 
 
