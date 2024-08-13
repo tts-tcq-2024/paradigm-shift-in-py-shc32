@@ -71,6 +71,10 @@ if __name__ == "__main__":
     assert battery_is_ok(25, 10, 0.7) == False
     assert battery_is_ok(25, 70, 0.9) == False
     # extension 1 test cases
-    assert battery_is_ok(1, 60, 0.4) == True
-    assert battery_is_ok(22, 78, 0.4) == True
-    assert battery_is_ok(28, 50, 0.78) == True
+    assert battery_is_ok(1, 60, 0.4) == True    # temperature approaching lower limit (0)
+    assert battery_is_ok(44, 60, 0.4) == True   # temperature approaching upper limit (45)
+    assert battery_is_ok(22, 78, 0.4) == True   # soc approaching upper limit (80)
+    assert battery_is_ok(22, 23, 0.4) == True   # soc approaching lower limit (20)
+    assert battery_is_ok(28, 50, 0.78) == True  # charge rate approaching upper limit (0.8)
+    assert battery_is_ok(28, 50, 0.02) == True  # charge rate approaching lower limit (0.0)
+
