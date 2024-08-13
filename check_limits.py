@@ -66,9 +66,11 @@ def battery_is_ok(temperature, soc, charge_rate):
 if __name__ == "__main__":
     # Test cases
     assert battery_is_ok(25, 70, 0.7) == True
+    assert battery_is_ok(50, 85, 0.0) == False
+    assert battery_is_ok(-1, 70, 0.7) == False
+    assert battery_is_ok(25, 10, 0.7) == False
+    assert battery_is_ok(25, 70, 0.9) == False
+    # extension 1 test cases
     assert battery_is_ok(1, 60, 0.4) == True
-    #assert battery_is_ok(50, 85, 0.0) == False
-    #assert battery_is_ok(-1, 70, 0.7) == False
-    #assert battery_is_ok(25, 10, 0.7) == False
-    #assert battery_is_ok(25, 70, 0.9) == False
-
+    assert battery_is_ok(22, 78, 0.4) == True
+    assert battery_is_ok(28, 50, 0.78) == True
