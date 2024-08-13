@@ -1,5 +1,5 @@
 # Global variable to set the language (English or German)
-LANGUAGE = 'EN'  # 'DE' for German
+LANGUAGE = 'DE'  # 'DE'-german, 'EN'-english
 
 def translate(message_key):
     translations = {
